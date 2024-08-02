@@ -1,12 +1,15 @@
 import Header from "./components/Header";
-import FeatureMovies from "./components/FeatureMovies";
+import PopularMedias from "./components/PopularMedias";
+import MediaList from "./components/MediaList";
+import { TOP_RATED_TABS, TRENDING_TABS } from "../utils";
 
 function App() {
   return (
     <div>
       <Header />
-      <FeatureMovies />
-      {/* <div className="mt-20 bg-blue-400">hello</div> */}
+      <PopularMedias />
+      <MediaList title={"Trending"} tabs={TRENDING_TABS} />
+      <MediaList title={"Top Rated"} tabs={TOP_RATED_TABS} />
     </div>
   );
 }
