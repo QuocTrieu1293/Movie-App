@@ -1,10 +1,18 @@
 import { faInfoCircle, faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { formatDate, getImageURL } from "../../../utils";
+import { formatDate, getImageURL } from "@utils";
+import { Link } from "react-router-dom";
+import CircularProgressBar from "@components/CircularProgressBar";
+import { useEffect, useState } from "react";
 
 const Media = (props) => {
+  const [ratingCircleScale, setRatingCircleScale] = useState(
+    window.innerWidth >= 1024 ? 1.6 : window.innerWidth >= 640 ? 1.4 : 1.2,
+  );
+
   const {
     data: {
+      id,
       backdrop_path,
       original_title,
       title,
@@ -13,56 +21,82 @@ const Media = (props) => {
       first_air_date,
       name,
       original_name,
+      vote_average,
+      vote_count,
     } = {},
     setAutoSlide,
   } = props;
 
+  useEffect(() => {
+    const handleResize = () =>
+      setRatingCircleScale(
+        window.innerWidth >= 1024 ? 1.6 : window.innerWidth >= 640 ? 1.4 : 1.2,
+      );
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full text-white">
       <img
-        src={getImageURL(backdrop_path)}
+        src={backdrop_path ? getImageURL(backdrop_path) : undefined}
         alt={`${original_title} backdrop`}
-        className="aspect-video w-full object-cover object-center brightness-50"
+        className={`aspect-video w-full object-cover object-top brightness-50 ${!backdrop_path && "opacity-0"}`}
       />
-      <div className="absolute bottom-[15%] left-[4%] right-[4%] text-white">
+      <div className="absolute bottom-[15%] left-[4%] right-[4%]">
         <div className="w-full sm:w-full lg:w-1/2 2xl:w-1/3">
           <p className="text-xl font-bold lg:text-[2vw]">
             {title || original_title || name || original_name}
           </p>
-          <div className="mt-5">
-            <span className="border border-gray-400 p-1 text-base font-[300] text-gray-400 sm:p-1.5 sm:text-xl">
-              PG
-            </span>
-            <span
-              className={`${!original_name && "hidden"} text-base before:p-2 before:text-xl before:content-['•']`}
-            >
-              TV Show
-            </span>
-            <p className="inline text-base before:p-2 before:text-xl before:content-['•'] lg:mt-2 lg:block lg:text-[1.2vw] lg:before:p-0 lg:before:content-none">
+          <div className="my-3 block sm:my-10 sm:flex sm:items-center md:my-5 lg:my-10">
+            <div className="inline-flex items-center">
+              <div className="ml-2 flex items-center gap-3 font-bold sm:gap-5 lg:gap-6">
+                <CircularProgressBar
+                  percent={Math.round((vote_average ?? 0) * 10)}
+                  isRated={vote_count > 0}
+                  scale={ratingCircleScale}
+                />
+                <div className="flex flex-col justify-center">
+                  <p>Rating</p>
+                  <p className="text-sm font-light text-slate-300">
+                    {vote_count} votes
+                  </p>
+                </div>
+              </div>
+              <span
+                className={`${!original_name && "hidden"} text-base before:p-2 before:align-middle before:text-xl before:content-['\\2022']`}
+              >
+                TV Show
+              </span>
+            </div>
+            <p className="mt-1 text-base sm:mt-0 sm:before:p-2 sm:before:align-middle sm:before:text-xl sm:before:content-['\2022'] lg:text-[1.2vw]">
               {formatDate(release_date || first_air_date)}
             </p>
           </div>
-          <div className={`mt-4 hidden ${overview && "md:block"}`}>
+          <div className={`mb-4 hidden ${overview && "md:block"}`}>
             <p className="text-2xl font-bold lg:text-[1.75vw]">Overview</p>
-            <p className="mt-2 text-base xl:text-[1.35vw]">{overview}</p>
+            <p className="mt-2 line-clamp-5 text-ellipsis text-base leading-normal xl:text-[1.35vw]">
+              {overview}
+            </p>
           </div>
-          <div className="mt-4 flex gap-3">
+          <div className="flex gap-3">
             <button
-              className="flex items-center justify-center gap-1 rounded bg-white px-5 py-2 text-sm text-black sm:text-base"
+              className="flex items-center justify-center gap-1 rounded bg-white px-2 py-1 text-sm text-black sm:px-5 sm:py-2 sm:text-base"
               onMouseEnter={() => setAutoSlide(false)}
               onMouseLeave={() => setAutoSlide(true)}
             >
               <FontAwesomeIcon icon={faPlay} />
               Trailer
             </button>
-            <button
-              className="flex items-center justify-center gap-1 rounded bg-slate-400/50 px-5 py-2 text-sm transition-colors duration-500 hover:bg-slate-400/65 sm:text-base"
+            <Link
+              className="flex items-center justify-center gap-1 rounded bg-slate-400/50 px-2 py-1 text-sm transition-colors duration-500 hover:bg-slate-400/65 sm:px-5 sm:py-2 sm:text-base"
               onMouseEnter={() => setAutoSlide(false)}
               onMouseLeave={() => setAutoSlide(true)}
+              to={`/movie/${id}`}
             >
               <FontAwesomeIcon icon={faInfoCircle} className="text-lg" />
               More Info
-            </button>
+            </Link>
           </div>
         </div>
       </div>

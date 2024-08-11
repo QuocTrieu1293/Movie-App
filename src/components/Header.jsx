@@ -1,17 +1,21 @@
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <header className="flex h-14 items-center justify-between bg-slate-950 px-[4%] text-sm text-white sm:h-16 sm:text-lg lg:h-20 lg:text-xl">
+    <header className="flex h-10 items-center justify-between bg-slate-950 px-[4%] text-base text-white sm:h-14">
       <div className="flex items-center gap-4 lg:gap-6">
-        <a href="#">
-          <img src="./netflix.png" className="w-24 sm:w-28" />
-        </a>
+        <Link to="/">
+          <img src="/netflix.png" className="w-24 sm:w-28" alt="netflix logo" />
+        </Link>
         <a href="#">Movies</a>
         <a href="#">TV Shows</a>
       </div>
-      <FontAwesomeIcon icon={faMagnifyingGlass} className="cursor-pointer" />
+      <FontAwesomeIcon
+        icon={faMagnifyingGlass}
+        className="cursor-pointer text-lg"
+      />
     </header>
   );
 };

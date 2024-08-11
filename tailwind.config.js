@@ -25,7 +25,8 @@ export default {
         fadeout: 'fadeout 700ms ease-out both'
       },
       colors: {
-        'netflix_red': "#E50914"
+        'netflix_red': "#E50914",
+        'netflix_red2': "#B20710"
       }
     },
   },
