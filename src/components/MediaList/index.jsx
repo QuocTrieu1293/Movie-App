@@ -1,30 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MediaCard from "@components/MediaList/MediaCard";
-import { GETRequestOption } from "@utils";
 import { Link } from "react-router-dom";
 import MediaCardSkeleton from "@components/MediaList/MediaCardSkeleton";
+import useFetch from "@hooks/useFetch";
 
 const MediaList = ({ title, tabs }) => {
   const LIST_LENGTH = 18;
 
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
-  const [mediaList, setMediaList] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
 
-  useEffect(() => {
-    setIsFetching(true);
-    fetch(selectedTab.url, GETRequestOption)
-      .then((res) => {
-        if (!res.ok)
-          throw new Error(
-            `>>> Fetching ${JSON.stringify(selectedTab)} in MediaList ${title} failed with status code ${res.status}`,
-          );
-        return res.json();
-      })
-      .then((res) => setMediaList(res.results.slice(0, LIST_LENGTH)))
-      .catch((e) => console.error(e))
-      .finally(() => setIsFetching(false));
-  }, [selectedTab]);
+  const { data = {}, isFetching } = useFetch({
+    url: selectedTab.url,
+    errorMsg: `>>> Error fetching ${JSON.stringify(selectedTab)} in MediaList ${title} failed`,
+  });
+  const mediaList = (data.results ?? []).slice(0, LIST_LENGTH);
 
   // console.log(mediaList);
 

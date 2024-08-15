@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import ActorCard from "@components/MediaDetail/ActorCard";
 import PlaceholderText from "@components/PlaceholderText";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
 const ActorList = ({ actors = [] }) => {
   const CARD_WIDTH = 140;
@@ -63,6 +65,10 @@ const ActorList = ({ actors = [] }) => {
                 setShowMoreLabel(isShowMore ? "Show less" : "Show more")
               }
             >
+              <FontAwesomeIcon
+                icon={showMoreLabel === "Show less" ? faAngleUp : faAngleDown}
+                className="mr-2"
+              />
               {showMoreLabel}
             </button>
           </div>

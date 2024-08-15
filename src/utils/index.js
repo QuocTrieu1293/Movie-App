@@ -50,7 +50,11 @@ export const formatNumber = (number, style = "decimal") => {
   return new Intl.NumberFormat("en-US", { style, currency: "USD" }).format(number);
 }
 
-export const getImageURL = (image_path, size = "original") => `${imageBaseURL}/${size}${image_path}`
+export const getImageURL = (image_path, size = "original") => {
+  if (!image_path)
+    return undefined;
+  return `${imageBaseURL}/${size}${image_path}`;
+}
 
 export const GETRequestOption = {
   method: "GET",

@@ -12,8 +12,8 @@ const MediaDetail = () => {
   const { id } = useParams();
   const [mediaInfo, setMediaInfo] = useState();
   const [recommends, setRecommends] = useState();
-  const [isFetching, setIsFetching] = useState(false);
-  const [isFetchingRecommends, setIsFetchingRecommends] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingRecommends, setIsFetchingRecommends] = useState(true);
 
   // fetch data
   useEffect(() => {

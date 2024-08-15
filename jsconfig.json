@@ -5,6 +5,8 @@
       "@components/*": ["src/components/*"],
       "@pages/*": ["src/pages/*"],
       "@utils": ["src/utils"], 
+      "@context/*": ["src/context/*"],
+      "@hooks/*": ["src/hooks/*"],
     }
   },
   

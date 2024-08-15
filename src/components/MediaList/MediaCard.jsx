@@ -1,5 +1,6 @@
 import { formatDate, getImageURL, imageSize } from "@utils";
 import CircularProgressBar from "@components/CircularProgressBar";
+import ImageComponent from "@components/ImageComponent";
 
 const MediaCard = ({ data }) => {
   const {
@@ -17,11 +18,12 @@ const MediaCard = ({ data }) => {
 
   return (
     <div className="flex h-full w-full cursor-pointer flex-col rounded-[9px] border border-slate-700">
-      <div className="relative aspect-[2/3] rounded-b-2xl rounded-t-lg bg-gradient-to-b from-[#8e0e00] to-[#1f1c18]">
-        <img
+      <div className="relative aspect-[2/3] rounded-b-2xl rounded-t-lg">
+        <ImageComponent
           src={getImageURL(poster_path, imageSize.poster.w342)}
-          alt=""
-          className="h-full w-full rounded-b-2xl rounded-t-lg object-cover"
+          alt={`${title} poster`}
+          className="rounded-b-2xl rounded-t-lg"
+          loading="lazy"
         />
         <span
           className={`absolute ${media_type === "tv" || original_name ? "block" : "hidden"} right-0.5 top-0.5 rounded-md bg-black/95 px-2 py-1 text-sm font-semibold text-white shadow-lg`}

@@ -1,4 +1,5 @@
 import CircularProgressBar from "@components/CircularProgressBar";
+import ImageComponent from "@components/ImageComponent";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatDate, getImageURL, imageSize } from "@utils";
@@ -25,10 +26,11 @@ const RelatedMediaCard = ({ data }) => {
     <div>
       <Link to={`/${media_type}/${id}`}>
         <div className="relative aspect-video cursor-pointer rounded-[7px] border border-slate-700 bg-[url('/assets/image_placeholder.svg')] bg-cover bg-center bg-no-repeat">
-          <img
+          <ImageComponent
             src={getImageURL(backdrop_path, imageSize.backdrop.w780)}
             alt={`${title || original_title || name || original_name}`}
-            className={`h-full w-full rounded-md object-cover object-center ${!backdrop_path && "opacity-0"}`}
+            className={`rounded-md`}
+            loading="lazy"
           />
           <div className="absolute inset-0 opacity-0 transition-opacity duration-200 hover:opacity-100">
             <div className="absolute inset-x-0 bottom-0 rounded-b-md bg-slate-950/90 p-2 py-[10px] text-sm">

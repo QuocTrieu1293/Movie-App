@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   formatDate,
   formatMediaDuration,
@@ -8,10 +8,13 @@ import {
 import CircularProgressBar from "@components/CircularProgressBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
+import Backdrop from "@components/Backdrop";
+import ImageComponent from "@components/ImageComponent";
+
+const DEFAULT_BKG_COLOR = "#0f172a";
 
 const Banner = ({ mediaInfo }) => {
-  const [backgroundColor, setBackgroundColor] = useState("#0f172a");
-  const posterRef = useRef(null);
+  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_BKG_COLOR);
 
   const { certification } = useMemo(
     () =>
@@ -57,18 +60,18 @@ const Banner = ({ mediaInfo }) => {
   useEffect(() => {
     // console.log("finding average color");
 
-    if (!posterRef.current) return;
+    if (!mediaInfo?.poster_path) return;
 
-    const getAverageImageColor = () => {
+    const getAverageImageColor = (node) => {
       // console.log("getAverageImageColor run");
       const canvas = document.createElement("canvas");
 
-      let height = (canvas.height = posterRef.current.naturalHeight);
-      let width = (canvas.width = posterRef.current.naturalWidth);
+      let height = (canvas.height = node.naturalHeight);
+      let width = (canvas.width = node.naturalWidth);
       // console.log({ width, height });
 
       const context = canvas.getContext("2d");
-      context.drawImage(posterRef.current, 0, 0);
+      context.drawImage(node, 0, 0);
 
       let data, length;
       try {
@@ -107,14 +110,22 @@ const Banner = ({ mediaInfo }) => {
       );
       // console.log({ averageColor });
     };
-    if (posterRef.current.complete) {
-      // console.log("getAverageImageColor run in complete");
-      getAverageImageColor();
-    } else {
-      // console.log("getAverageImageColor run in onload");
-      posterRef.current.addEventListener("load", getAverageImageColor);
-    }
-  }, []);
+
+    const posterImage = new Image();
+    posterImage.crossOrigin = "Anonymous";
+    posterImage.width = 300;
+    posterImage.height = 450;
+    posterImage.onload = (e) => getAverageImageColor(e.target);
+
+    posterImage.src = getImageURL(
+      mediaInfo?.poster_path,
+      imageSize.poster.w300_h450,
+    );
+
+    return () => {
+      posterImage.onload = null;
+    };
+  }, [mediaInfo?.poster_path]);
 
   // console.log(backgroundColor);
 
@@ -126,36 +137,24 @@ const Banner = ({ mediaInfo }) => {
         boxShadow: `${backgroundColor}85 0px 12px 25px 0px`,
       }}
     >
-      <div className="absolute inset-0">
-        <img
-          alt={`${mediaInfo?.title || mediaInfo?.original_title} backdrop`}
-          src={
-            mediaInfo?.backdrop_path
-              ? getImageURL(mediaInfo?.backdrop_path)
-              : undefined
-          }
-          className={`h-full w-full object-cover object-top brightness-[.2] ${!mediaInfo?.backdrop_path && "opacity-0"}`}
-        />
-      </div>
+      <Backdrop
+        alt={`${mediaInfo?.title || mediaInfo?.original_title} backdrop`}
+        src={getImageURL(mediaInfo?.backdrop_path)}
+        className="aspect-video max-w-[1920px] brightness-[.2]"
+      />
       <div
         className={`relative px-10 py-8`}
         style={{ backgroundColor: `${backgroundColor}85` }}
       >
         <div className="relative mx-auto flex max-w-6xl gap-10 2xl:max-w-screen-xl">
-          <div className="aspect-[2/3] w-[300px] min-w-52 self-start rounded-[9px] bg-[url('/assets/image_placeholder.svg')] bg-cover bg-center bg-no-repeat">
-            <img
-              ref={posterRef}
+          <div className="rounded-[9px]` aspect-[2/3] w-[300px] min-w-52 self-start">
+            <ImageComponent
               alt={`${mediaInfo?.title || mediaInfo?.original_title} poster`}
-              src={
-                mediaInfo?.poster_path
-                  ? getImageURL(
-                      mediaInfo?.poster_path,
-                      imageSize.poster.w300_h450,
-                    )
-                  : undefined
-              }
-              crossOrigin="anonymous"
-              className={`h-full w-full rounded-lg ${!mediaInfo?.poster_path && "opacity-0"} object-cover`}
+              src={getImageURL(
+                mediaInfo?.poster_path,
+                imageSize.poster.w300_h450,
+              )}
+              className={`rounded-lg`}
             />
           </div>
 

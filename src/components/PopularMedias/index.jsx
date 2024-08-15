@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Media from "@components/PopularMedias/Media";
 import { GETRequestOption } from "@utils";
 import LoadingIndicator from "@components/LoadingIndicator";
@@ -10,7 +10,7 @@ const PopularMedias = () => {
   const [preSelectedMediaIndex, setPreSelectedMediaIndex] = useState(null);
   const [mediaList, setMediaList] = useState([]);
   const [autoSlide, setAutoSlide] = useState(true);
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
 
   // console.log("FeatureMovies rendering");
   // console.log(mediaList);
@@ -54,10 +54,13 @@ const PopularMedias = () => {
       .finally(() => setIsFetching(false));
   }, []);
 
-  const changeSelectedMediaHandler = (idx) => {
-    setSelectedMediaIndex(idx);
-    setPreSelectedMediaIndex(selectedMediaIndex);
-  };
+  const changeSelectedMediaHandler = useCallback(
+    (idx) => {
+      setSelectedMediaIndex(idx);
+      setPreSelectedMediaIndex(selectedMediaIndex);
+    },
+    [selectedMediaIndex],
+  );
 
   // Dùng timeout
   useEffect(() => {
@@ -72,7 +75,7 @@ const PopularMedias = () => {
         clearTimeout(timeoutId);
       };
     }
-  }, [selectedMediaIndex, autoSlide, isFetching]);
+  }, [selectedMediaIndex, autoSlide, isFetching, changeSelectedMediaHandler]);
 
   // Dùng interval
   // useEffect(() => {
@@ -100,7 +103,7 @@ const PopularMedias = () => {
           console.log("mouse up PopularMedias");
           setAutoSlide(true);
         }}
-        className={`${!isFetching ? "animate-fadein" : "hidden"}`}
+        className={`${!isFetching ? "animate-fadein" : "hidden"} aspect-video w-full`}
       >
         {/* {mediaList.map((media, idx) => (
         <div
@@ -114,7 +117,7 @@ const PopularMedias = () => {
         {mediaList.map((media, idx) => (
           <div
             key={media.id}
-            className={`absolute w-full ${idx === selectedMediaIndex ? "animate-fadein" : idx === preSelectedMediaIndex ? "animate-fadeout" : "hidden"}`}
+            className={`absolute h-full w-full ${idx === selectedMediaIndex ? "animate-fadein" : idx === preSelectedMediaIndex ? "animate-fadeout" : "hidden"}`}
           >
             <Media data={media} setAutoSlide={setAutoSlide} />
           </div>

@@ -4,6 +4,7 @@ import { formatDate, getImageURL } from "@utils";
 import { Link } from "react-router-dom";
 import CircularProgressBar from "@components/CircularProgressBar";
 import { useEffect, useState } from "react";
+import Backdrop from "@components/Backdrop";
 
 const Media = (props) => {
   const [ratingCircleScale, setRatingCircleScale] = useState(
@@ -37,11 +38,13 @@ const Media = (props) => {
   }, []);
 
   return (
-    <div className="relative w-full text-white">
-      <img
-        src={backdrop_path ? getImageURL(backdrop_path) : undefined}
-        alt={`${original_title} backdrop`}
-        className={`aspect-video w-full object-cover object-top brightness-50 ${!backdrop_path && "opacity-0"}`}
+    <div className="relative h-full w-full text-white">
+      <Backdrop
+        src={getImageURL(backdrop_path)}
+        alt={`${title || original_title || name || original_name} backdrop`}
+        className="brightness-50"
+        maxImageWidth={3840}
+        maxImageHeight={2160}
       />
       <div className="absolute bottom-[15%] left-[4%] right-[4%]">
         <div className="w-full sm:w-full lg:w-1/2 2xl:w-1/3">
