@@ -49,7 +49,14 @@ const Media = (props) => {
       <div className="absolute bottom-[15%] left-[4%] right-[4%]">
         <div className="w-full sm:w-full lg:w-1/2 2xl:w-1/3">
           <p className="text-xl font-bold lg:text-[2vw]">
-            {title || original_title || name || original_name}
+            <Link
+              to={`/${original_title ? "movie" : "tv"}/${id}`}
+              className="transition-colors duration-200 hover:text-netflix_red"
+              onMouseEnter={() => setAutoSlide(false)}
+              onMouseLeave={() => setAutoSlide(true)}
+            >
+              {title || original_title || name || original_name}
+            </Link>
           </p>
           <div className="my-3 block sm:my-10 sm:flex sm:items-center md:my-5 lg:my-10">
             <div className="inline-flex items-center">
@@ -95,7 +102,7 @@ const Media = (props) => {
               className="flex items-center justify-center gap-1 rounded bg-slate-400/50 px-2 py-1 text-sm transition-colors duration-500 hover:bg-slate-400/65 sm:px-5 sm:py-2 sm:text-base"
               onMouseEnter={() => setAutoSlide(false)}
               onMouseLeave={() => setAutoSlide(true)}
-              to={`/movie/${id}`}
+              to={`/${original_title ? "movie" : "tv"}/${id}`}
             >
               <FontAwesomeIcon icon={faInfoCircle} className="text-lg" />
               More Info

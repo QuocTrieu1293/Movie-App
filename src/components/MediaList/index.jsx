@@ -1,6 +1,5 @@
 import { useState } from "react";
 import MediaCard from "@components/MediaList/MediaCard";
-import { Link } from "react-router-dom";
 import MediaCardSkeleton from "@components/MediaList/MediaCardSkeleton";
 import useFetch from "@hooks/useFetch";
 
@@ -53,9 +52,7 @@ const MediaList = ({ title, tabs }) => {
           <div className="animate-fadein">
             <div className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 sm:gap-x-3.5 sm:gap-y-6 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8">
               {mediaList.map((media) => (
-                <Link key={media.id} to={`/movie/${media.id}`}>
-                  <MediaCard data={media} />
-                </Link>
+                <MediaCard key={media.id} data={media} />
               ))}
             </div>
           </div>

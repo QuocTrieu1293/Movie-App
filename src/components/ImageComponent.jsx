@@ -31,7 +31,10 @@ const ImageComponent = ({
   return (
     <div
       className={`h-full w-full bg-cover bg-center bg-no-repeat ${className} ${isLoaded ? "" : "blur-sm"} transition-all duration-200`}
-      style={{ backgroundImage: `url('${fallback_src}')` }}
+      style={{
+        backgroundImage:
+          isLoaded && !isError ? undefined : `url('${fallback_src}')`,
+      }}
     >
       <img
         ref={imgRef}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   formatDate,
   formatMediaDuration,
@@ -10,57 +10,34 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import Backdrop from "@components/Backdrop";
 import ImageComponent from "@components/ImageComponent";
+import { Link } from "react-router-dom";
 
 const DEFAULT_BKG_COLOR = "#0f172a";
 
-const Banner = ({ mediaInfo }) => {
+const Banner = ({
+  id,
+  title,
+  certification,
+  crews = [],
+  poster_path,
+  backdrop_path,
+  release_date,
+  genres = [],
+  runtime,
+  vote_average,
+  vote_count,
+  tagline,
+  overview,
+  media_type,
+}) => {
   const [backgroundColor, setBackgroundColor] = useState(DEFAULT_BKG_COLOR);
-
-  const { certification } = useMemo(
-    () =>
-      mediaInfo?.release_dates.results
-        .find((item) => ["US", "VN"].includes(item.iso_3166_1))
-        ?.release_dates.find((item) => item.certification) ?? {},
-    [mediaInfo],
-  );
-  // console.log({ release_date, certification });
-
-  const crews = useMemo(() => {
-    const grouped = Object.groupBy(
-      mediaInfo?.credits.crew ?? [],
-      (item) => item.id,
-    );
-    let rs = [];
-    for (let group in grouped) {
-      const jobs = grouped[group].map((item) => item.job);
-      const filteredJobs = jobs.filter((job) =>
-        [
-          "Director",
-          "Writer",
-          "Characters",
-          "Story",
-          "Screenplay",
-          "Story",
-          "Novel",
-        ].includes(job),
-      );
-      if (filteredJobs.length > 0)
-        rs.push({
-          id: group,
-          name: grouped[group][0].name,
-          jobs: filteredJobs,
-        });
-    }
-    return rs;
-  }, [mediaInfo]);
-  // console.log({ crews });
 
   // Get average color of media poster to setBackgroundColor
   // Reference code: https://github.com/deepeshrohilla/averageimagecolor.git
   useEffect(() => {
     // console.log("finding average color");
 
-    if (!mediaInfo?.poster_path) return;
+    if (!poster_path) return;
 
     const getAverageImageColor = (node) => {
       // console.log("getAverageImageColor run");
@@ -117,15 +94,12 @@ const Banner = ({ mediaInfo }) => {
     posterImage.height = 450;
     posterImage.onload = (e) => getAverageImageColor(e.target);
 
-    posterImage.src = getImageURL(
-      mediaInfo?.poster_path,
-      imageSize.poster.w300_h450,
-    );
+    posterImage.src = getImageURL(poster_path, imageSize.poster.w300_h450);
 
     return () => {
       posterImage.onload = null;
     };
-  }, [mediaInfo?.poster_path]);
+  }, [poster_path]);
 
   // console.log(backgroundColor);
 
@@ -138,8 +112,8 @@ const Banner = ({ mediaInfo }) => {
       }}
     >
       <Backdrop
-        alt={`${mediaInfo?.title || mediaInfo?.original_title} backdrop`}
-        src={getImageURL(mediaInfo?.backdrop_path)}
+        alt={`${title} backdrop`}
+        src={getImageURL(backdrop_path)}
         className="aspect-video max-w-[1920px] brightness-[.2]"
       />
       <div
@@ -147,26 +121,25 @@ const Banner = ({ mediaInfo }) => {
         style={{ backgroundColor: `${backgroundColor}85` }}
       >
         <div className="relative mx-auto flex max-w-6xl gap-10 2xl:max-w-screen-xl">
-          <div className="rounded-[9px]` aspect-[2/3] w-[300px] min-w-52 self-start">
+          <div className="aspect-[2/3] w-[300px] min-w-52 self-start">
             <ImageComponent
-              alt={`${mediaInfo?.title || mediaInfo?.original_title} poster`}
-              src={getImageURL(
-                mediaInfo?.poster_path,
-                imageSize.poster.w300_h450,
-              )}
+              alt={`${title} poster`}
+              src={getImageURL(poster_path, imageSize.poster.w300_h450)}
               className={`rounded-lg`}
             />
           </div>
 
           <div className="flex-1 leading-snug">
-            <h2 className="text-xl font-bold leading-tight transition-colors duration-200 hover:text-netflix_red lg:text-[2.5vw]">
-              <a href="#">
-                {(mediaInfo?.title || mediaInfo?.original_title) + " "}
-                <span className="font-normal text-slate-200">
-                  {!!mediaInfo?.release_date &&
-                    `(${new Date(mediaInfo.release_date).getFullYear()})`}
-                </span>
-              </a>
+            <h2 className="text-xl font-bold leading-tight lg:text-[2.5vw]">
+              <Link
+                to={`/${media_type}/${id}`}
+                className="transition-colors duration-200 hover:text-netflix_red"
+              >
+                {title + " "}
+              </Link>
+              <span className="font-normal text-slate-200">
+                {!!release_date && `(${new Date(release_date).getFullYear()})`}
+              </span>
             </h2>
             <div className="flex items-center">
               {certification && (
@@ -174,14 +147,11 @@ const Banner = ({ mediaInfo }) => {
                   {certification}
                 </span>
               )}
-              <span>
-                {!!mediaInfo?.release_date &&
-                  formatDate(mediaInfo.release_date)}
-              </span>
+              <span>{formatDate(release_date)}</span>
               <ul
-                className={`flex items-center ${!!mediaInfo?.release_date && "before:px-2 before:text-xl before:leading-none before:content-['\\2022']"}`}
+                className={`flex items-center ${!!release_date && "before:px-2 before:text-xl before:leading-none before:content-['\\2022']"}`}
               >
-                {mediaInfo?.genres.map((item, idx) => (
+                {genres.map((item, idx) => (
                   <li key={item.id}>
                     <a
                       href="#"
@@ -189,27 +159,27 @@ const Banner = ({ mediaInfo }) => {
                     >
                       {item.name}
                     </a>
-                    {idx < mediaInfo.genres.length - 1 && <>,&nbsp;</>}
+                    {idx < genres.length - 1 && <>,&nbsp;</>}
                   </li>
                 ))}
               </ul>
-              {mediaInfo?.runtime > 0 && (
+              {!!runtime && (
                 <span className="before:px-2 before:text-xl before:leading-none before:content-['\2022']">
-                  {formatMediaDuration(mediaInfo?.runtime)}
+                  {formatMediaDuration(runtime)}
                 </span>
               )}
             </div>
             <div className="mt-8 flex items-center gap-6">
               <div className="flex items-center gap-5 font-bold">
                 <CircularProgressBar
-                  percent={Math.round((mediaInfo?.vote_average ?? 0) * 10)}
-                  isRated={mediaInfo?.vote_count > 0}
+                  percent={Math.round(vote_average * 10)}
+                  isRated={vote_count > 0}
                   scale={1.4}
                 />{" "}
                 <div className="flex flex-col justify-center">
                   <p>Rating</p>
                   <p className="text-xs font-light text-slate-300 lg:text-[1vw]">
-                    {mediaInfo?.vote_count} votes
+                    {vote_count || 0} votes
                   </p>
                 </div>
               </div>
@@ -219,14 +189,14 @@ const Banner = ({ mediaInfo }) => {
             </div>
             <div className="mt-8">
               <p className="text-sm italic text-slate-300 lg:text-[1.4vw]">
-                {mediaInfo?.tagline}
+                {tagline}
               </p>
-              {mediaInfo?.overview && (
+              {overview && (
                 <>
                   <h3 className="my-2 font-semibold lg:text-[1.5vw]">
                     Overview
                   </h3>
-                  <p className="leading-normal">{mediaInfo?.overview}</p>
+                  <p className="leading-normal">{overview}</p>
                 </>
               )}
             </div>

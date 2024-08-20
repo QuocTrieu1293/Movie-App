@@ -25,7 +25,7 @@ const RelatedMediaCard = ({ data }) => {
   return (
     <div>
       <Link to={`/${media_type}/${id}`}>
-        <div className="relative aspect-video cursor-pointer rounded-[7px] border border-slate-700 bg-[url('/assets/image_placeholder.svg')] bg-cover bg-center bg-no-repeat">
+        <div className="relative aspect-video cursor-pointer rounded-[7px] border border-slate-700">
           <ImageComponent
             src={getImageURL(backdrop_path, imageSize.backdrop.w780)}
             alt={`${title || original_title || name || original_name}`}
@@ -43,7 +43,7 @@ const RelatedMediaCard = ({ data }) => {
               </span>
               <div className="absolute -top-[2px] right-0">
                 <CircularProgressBar
-                  percent={Math.round(vote_average ?? 0) * 10}
+                  percent={Math.round(vote_average) * 10}
                   isRated={vote_count > 0}
                   scale={0.7}
                 />
@@ -62,7 +62,7 @@ const RelatedMediaCard = ({ data }) => {
           to={`/${media_type}/${id}`}
           className="transition-colors hover:text-netflix_red"
         >
-          {title || original_title}
+          {title || original_title || name || original_name}
         </Link>
       </p>
     </div>

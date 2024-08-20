@@ -26,6 +26,10 @@ export const imageSize = {
     w185: "w185",
     h632: "h632",
     origin: "original"
+  },
+
+  logo: {
+    h30: "h30",
   }
 }
 

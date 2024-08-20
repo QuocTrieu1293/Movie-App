@@ -6,6 +6,7 @@ import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
 const ActorList = ({ actors = [] }) => {
   const CARD_WIDTH = 140;
+  const ITEM_GAP = 12;
   // const INIT_LENGTH = 6;
 
   const [isShowMore, setIsShowMore] = useState(false);
@@ -33,7 +34,15 @@ const ActorList = ({ actors = [] }) => {
   // Tính toán initlength để fill trên một dòng
   useEffect(() => {
     // console.log("get width");
-    setInitLength(~~(gridContainerRef.current.offsetWidth / (CARD_WIDTH + 12)));
+    setInitLength(
+      ~~(gridContainerRef.current.offsetWidth / (CARD_WIDTH + ITEM_GAP)),
+    );
+    window.addEventListener("resize", () => {
+      if (gridContainerRef.current)
+        setInitLength(
+          ~~(gridContainerRef.current.offsetWidth / (CARD_WIDTH + ITEM_GAP)),
+        );
+    });
   }, []);
   // console.log({ initLength });
 
@@ -41,7 +50,8 @@ const ActorList = ({ actors = [] }) => {
     <div>
       <h3 className="text-lg font-bold lg:text-[1.65vw]">Actors</h3>
       <div
-        className={`my-3 grid grid-cols-[repeat(auto-fill,140px)] justify-center gap-3 sm:mt-5`}
+        className={`my-3 grid grid-cols-[repeat(auto-fill,140px)] justify-center sm:mt-5`}
+        style={{ gap: ITEM_GAP }}
         ref={gridContainerRef}
       >
         {actors.map((actor, idx) => (

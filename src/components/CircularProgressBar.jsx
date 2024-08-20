@@ -19,6 +19,8 @@ const COLORS = {
 const CircularProgressBar = ({ percent = 0, scale = 1, isRated = true }) => {
   const size = 44,
     strokeWidth = 4;
+
+  if (!percent) percent = 0;
   percent = Math.min(percent, 100);
   const r = size / 2 - strokeWidth / 2;
   const color = !isRated

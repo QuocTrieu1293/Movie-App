@@ -3,10 +3,11 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "@pages/HomePage";
-import MediaDetail from "@pages/MediaDetail";
+import MovieDetail from "@pages/MovieDetail";
 import RootLayout from "@pages/RootLayout";
 import MediaCardSkeleton from "@components/MediaList/MediaCardSkeleton";
 import AppProvider from "@context/AppProvider";
+import TVShowDetail from "@pages/TVShowDetail";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +19,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/movie/:id",
-        element: <MediaDetail />,
+        element: <MovieDetail />,
+      },
+      {
+        path: "/tv/:id",
+        element: <TVShowDetail />,
       },
     ],
   },

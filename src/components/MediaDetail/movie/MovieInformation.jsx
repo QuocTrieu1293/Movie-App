@@ -2,21 +2,20 @@ import { useAppContext } from "@context/AppProvider";
 import { formatNumber, getDisplayName } from "@utils";
 import { useMemo } from "react";
 
-const MovieInformation = ({ data = {} }) => {
+const MovieInformation = ({
+  original_title,
+  status,
+  origin_countries = [],
+  revenue,
+  budget,
+  original_language,
+}) => {
   const { languages } = useAppContext();
-
-  const {
-    original_title,
-    status,
-    origin_country: origin_countries = [],
-    revenue,
-    budget,
-    original_language,
-  } = data;
 
   const language = useMemo(
     () => languages.find((lang) => lang.iso_639_1 === original_language) ?? {},
-    [languages, original_language],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(languages), original_language],
   );
 
   return (
@@ -32,8 +31,12 @@ const MovieInformation = ({ data = {} }) => {
           <p>{status || <>&nbsp;-</>}</p>
         </div>
         <div>
-          <p className="font-semibold">Original Countries</p>
-          <div className="mt-1 flex gap-1">
+          <p className="font-semibold">
+            {origin_countries.length > 1
+              ? "Original Countries"
+              : "Original Country"}
+          </p>
+          <div className="mt-1 flex gap-2">
             {origin_countries.length === 0 ? (
               <>&nbsp;-</>
             ) : (
