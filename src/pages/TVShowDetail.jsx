@@ -59,7 +59,7 @@ const TVShowDetail = () => {
   }, [id]);
   // console.log("isFetching", isFetching);
 
-  console.log({ tvShowInfo });
+  // console.log({ tvShowInfo });
 
   const {
     name,

@@ -15,9 +15,11 @@ const ImageComponent = ({
   useEffect(() => {
     const image = imgRef.current;
     image.onload = () => {
+      console.log("image load success");
       setIsLoaded(true);
     };
     image.onerror = () => {
+      console.log("image load fail");
       setIsLoaded(true);
       setIsError(true);
     };
@@ -38,7 +40,7 @@ const ImageComponent = ({
     >
       <img
         ref={imgRef}
-        src={fallback_src}
+        // src={fallback_src}
         crossOrigin="anonymous"
         className={`h-full w-full object-cover object-center ${className} ${isLoaded && !isError ? "opacity-100" : "opacity-0"} transition-all duration-200`}
         {...props}

@@ -30,23 +30,22 @@ const TVShowSeason = ({ data, tvShow }) => {
   // console.log("rendered", cnt.current);
 
   useEffect(() => {
-    const cutOffTextHandler = () => {
-      const clientHeight = overviewRef.current.clientHeight;
-      const offsetTop = overviewRef.current.parentNode.offsetTop;
+    const cutOffTextHandler = (node) => {
+      if (!node) return;
+      const clientHeight = node.clientHeight;
+      const offsetTop = node.parentNode.offsetTop;
       const remainingCardHeight = CARD_HEIGHT - offsetTop - 20; //20 là padding bottom của container
 
       let lineHeight, numOfLineClamp;
 
       if (clientHeight > remainingCardHeight) {
         // overflow
-        lineHeight = parseFloat(
-          window.getComputedStyle(overviewRef.current).lineHeight,
-        );
+        lineHeight = parseFloat(window.getComputedStyle(node).lineHeight);
         numOfLineClamp = ~~(remainingCardHeight / lineHeight);
         setOverviewState({
           ...overviewState,
           expanseCardHeight:
-            CARD_HEIGHT + clientHeight - remainingCardHeight + 24, //24 là height của div chứa icon sổ xuống
+            CARD_HEIGHT + clientHeight - remainingCardHeight + 20, //20 là height của div chứa icon sổ xuống
           isOverflow: true,
           lineClamp: numOfLineClamp,
         });
@@ -55,16 +54,24 @@ const TVShowSeason = ({ data, tvShow }) => {
       }
     };
 
-    cutOffTextHandler();
-    window.addEventListener("resize", cutOffTextHandler);
-    return () => window.removeEventListener("resize", cutOffTextHandler);
-  }, [overviewState]);
+    cutOffTextHandler(overviewRef.current);
+    const element = overviewRef.current;
+    element.onload = (e) => cutOffTextHandler(e.target);
+    const handleResize = () => cutOffTextHandler(overviewRef.current);
+    window.addEventListener("resize", handleResize);
 
-  console.log(name, { overviewState });
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      element.onload = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // console.log(name, { overviewState });
 
   return (
     <div
-      className={`duration-400 flex border border-slate-700 shadow-lg transition-[height] ease-linear`}
+      className={`duration-400 flex border border-slate-700 shadow-lg transition-[height,_border] ease-linear`}
       style={
         !overviewState.isOverflow || !isShowMore
           ? { height: CARD_HEIGHT + 2, borderRadius: 9 }
@@ -76,14 +83,14 @@ const TVShowSeason = ({ data, tvShow }) => {
       }
     >
       <div
-        className={`aspect-[2/3] ${overviewState.isOverflow && isShowMore && "translate-y-5"} duration-400 transition-all`}
+        className={`aspect-[2/3] ${overviewState.isOverflow && isShowMore && "translate-y-5"} duration-400 transition-transform`}
         style={{ maxHeight: CARD_HEIGHT, height: CARD_HEIGHT }}
       >
         <ImageComponent
           src={getImageURL(poster_path, imageSize.poster.w154)}
-          alt=""
+          alt={name}
           loading="lazy"
-          className={`${overviewState.isOverflow && isShowMore ? "rounded-lg" : "rounded-l-lg"} transition-all duration-500`}
+          className={`${overviewState.isOverflow && isShowMore ? "rounded-lg" : "rounded-l-lg"} duration-400 transition-[border-radius]`}
         />
       </div>
       <div className="relative flex-1 p-5">
@@ -132,16 +139,24 @@ const TVShowSeason = ({ data, tvShow }) => {
             </div>
             {overviewState.isOverflow && (
               <div
-                className={`${!isShowMore && "absolute inset-x-0 bottom-0 h-7 bg-gradient-to-t from-black"} transition-all duration-500`}
+                className={`${!isShowMore ? "absolute inset-x-0 bottom-0 h-7" : "relative mt-1"} group cursor-pointer`}
+                onClick={() => setIsShowMore(!isShowMore)}
               >
                 <div
-                  className={`${!isShowMore && "absolute inset-x-0 -bottom-5 top-0"} cursor-pointer text-center text-base text-netflix_red2 transition-colors duration-200 hover:text-netflix_red`}
-                  onClick={() => setIsShowMore(!isShowMore)}
+                  className={`absolute inset-0 bg-gradient-to-t from-black transition-opacity duration-500 ${!isShowMore ? "opacity-100" : "opacity-0"}`}
+                ></div>
+                <div
+                  className={`${!isShowMore ? "absolute inset-x-0 -bottom-3.5 top-0" : "relative"} flex items-end justify-center`}
                 >
-                  <FontAwesomeIcon
-                    icon={faAngleDown}
-                    className={`${isShowMore ? "rotate-180" : "absolute bottom-1.5"} transition-transform duration-500`}
-                  />
+                  <button
+                    className={`text-base leading-none text-netflix_red2 transition-colors duration-200 group-hover:text-netflix_red`}
+                    onClick={() => {}}
+                  >
+                    <FontAwesomeIcon
+                      icon={faAngleDown}
+                      className={`${isShowMore && "rotate-180"} transition-transform duration-500`}
+                    />
+                  </button>
                 </div>
               </div>
             )}
@@ -149,7 +164,7 @@ const TVShowSeason = ({ data, tvShow }) => {
 
           {/* Virtual Element */}
           <div
-            className={`invisible absolute inset-x-0 top-0 text-sm font-light leading-normal lg:text-[1.25vw]`}
+            className={`pointer-events-none invisible absolute inset-x-0 top-0 text-sm font-light leading-normal lg:text-[1.25vw]`}
             ref={overviewRef}
           >
             {overview.split("\n\n").map((para, idx) => (
